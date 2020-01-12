@@ -19,6 +19,13 @@ spec:
   mon:
     count: 3
     allowMultiplePerNode: false
+    mgr:
+     modules:
+    # Several modules should not need to be included in this list. The "dashboard" and "monitoring" modules
+    # are already enabled by other settings in the cluster CR and the "rook" module is always enabled.
+     - name: pg_autoscaler
+       enabled: true
+  # enable the ceph dashboard for viewing cluster status
     # A volume claim template can be specified in which case new monitors (and
     # monitors created during fail over) will construct a PVC based on the
     # template for the monitor's primary storage. Changes to the template do not
@@ -27,7 +34,7 @@ spec:
     # size appropriate for monitor data will be used.
     volumeClaimTemplate:
       spec:
-        storageClassName: gp2
+        storageClassName: ibmc-vpc-block-5iops-tier-waitforfirstcustomer
         resources:
           requests:
             storage: 10Gi
@@ -43,7 +50,7 @@ spec:
     hostNetwork: false
   storage:
     storageClassDeviceSets:
-    - name: set1
+    - name: set-ibmc-vpc-block-5iops-tier
       # The number of OSDs to create from this device set
       count: 3
       # IMPORTANT: If volumes specified by the storageClassName are not portable across nodes
@@ -92,14 +99,14 @@ spec:
         spec:
           resources:
             requests:
-              storage: 10Gi
+              storage: 200Gi
           # IMPORTANT: Change the storage class depending on your environment (e.g. local-storage, gp2)
-          storageClassName: gp2
+          storageClassName: ibmc-vpc-block-5iops-tier-waitforfirstcustomer
           volumeMode: Block
           accessModes:
             - ReadWriteOnce
   disruptionManagement:
-    managePodBudgets: false
+    managePodBudgets: true
     osdMaintenanceTimeout: 30
     manageMachineDisruptionBudgets: false
     machineDisruptionBudgetNamespace: openshift-machine-api
