@@ -27,7 +27,7 @@ spec:
     # size appropriate for monitor data will be used.
     volumeClaimTemplate:
       spec:
-        storageClassName: gp2
+        storageClassName: ibmc-vpc-block-5iops-tier-custom
         resources:
           requests:
             storage: 10Gi
@@ -41,7 +41,7 @@ spec:
     hostNetwork: false
   storage:
     storageClassDeviceSets:
-    - name: set1
+    - name: ibmc-vpc-block-5iops-tier-custom
       # The number of OSDs to create from this device set
       count: 3
       # IMPORTANT: If volumes specified by the storageClassName are not portable across nodes
@@ -78,26 +78,26 @@ spec:
                   - rook-ceph-osd-prepare
               topologyKey: kubernetes.io/hostname
       resources:
-      #   limits:
-      #     cpu: "500m"
-      #     memory: "4Gi"
-      #   requests:
-      #     cpu: "500m"
-      #     memory: "4Gi"
+         limits:
+           cpu: "500m"
+           memory: "4Gi"
+         requests:
+           cpu: "500m"
+           memory: "4Gi"
       volumeClaimTemplates:
       - metadata:
           name: data
         spec:
           resources:
             requests:
-              storage: 10Gi
+              storage: 2000Gi
           # IMPORTANT: Change the storage class depending on your environment (e.g. local-storage, gp2)
-          storageClassName: gp2
+          storageClassName: ibmc-vpc-block-5iops-tier-custom
           volumeMode: Block
           accessModes:
             - ReadWriteOnce
   disruptionManagement:
-    managePodBudgets: false
+    managePodBudgets: true
     osdMaintenanceTimeout: 30
     manageMachineDisruptionBudgets: false
     machineDisruptionBudgetNamespace: openshift-machine-api
